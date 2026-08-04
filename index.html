@@ -409,12 +409,12 @@
 
   async function persist(submit){
     if(!state.room) return;
-
+  
     if(submit===true){ state.status='submitted'; state.submittedAt = new Date().toISOString(); }
     if(submit===false){ state.status='draft'; }
     state.updatedAt = new Date().toISOString();
-
-    // 1. 내 컴퓨터 브라우저에 해당 실 독립 데이터 저장
+  
+    // 1. 내 기기 브라우저 저장
     roomDataStore[state.room.key] = {
       cart: state.cart,
       customItems: state.customItems,
@@ -423,8 +423,8 @@
       submittedAt: state.submittedAt
     };
     saveLocalStore();
-
-    // 2. 구글 시트로 데이터 전송
+  
+    // 2. 구글 시트로 안정적인 크로스 도메인 전송
     const payload = {
       roomKey: state.room.key,
       roomName: state.room.name,
@@ -433,14 +433,17 @@
       status: state.status,
     };
     
-    try{
+    try {
+      // 폼 전송 형태로 인코딩하여 CORS 모바일/타지역 차단 방지
       await fetch(GOOGLE_WEBAPP_URL, {
         method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify(payload)
       });
-    }catch(e){ showToast('구글 시트 전송 실패'); }
+    } catch(e) { 
+      console.error("전송 오류:", e);
+      showToast('구글 시트 전송에 실패했습니다. 다시 시도해 주세요.'); 
+    }
   }
 
   let saveTimer=null;
