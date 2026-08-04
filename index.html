@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>사무용품 신청 사이트</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700&family=Noto+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+  :root{
+    --paper:#EEF2EF;
+    --card:#FFFFFF;
+    --ink:#1B2A4A;
+    --ink-soft:#5B6B7C;
+    --line:#C9D0C7;
+    --seal:#B23A2E;
+    --seal-soft:rgba(178,58,46,0.09);
+    --teal:#3F6659;
+    --teal-soft:rgba(63,102,89,0.10);
+    --amber:#A8752F;
+    --amber-soft:rgba(168,117,47,0.12);
+    --shadow: 0 1px 2px rgba(27,42,74,0.06), 0 6px 20px rgba(27,42,74,0.05);
+  }
+  *{box-sizing:border-box;}
+  #app{
+    font-family:'Noto Sans KR', sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    min-height:100%;
+    padding:0;
+    line-height:1.5;
+  }
+  .mono{font-family:'IBM Plex Mono', monospace;}
+  .serif{font-family:'Noto Serif KR', serif;}
+
+  /* ---------- doc header ---------- */
+  .doc-header{
+    padding:28px 32px 18px;
+    background:var(--card);
+    border-bottom:3px double var(--line);
+  }
+  .doc-header .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:.14em;
+    color:var(--seal);
+    text-transform:uppercase;
+    margin-bottom:6px;
+  }
+  .doc-header h1{
+    font-family:'Noto Serif KR', serif;
+    font-weight:700;
+    font-size:22px;
+    margin:0 0 4px;
+    color:var(--ink);
+  }
+  .doc-header .sub{
+    font-size:12.5px;
+    color:var(--ink-soft);
+  }
+  .doc-header .row{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:16px;
+    flex-wrap:wrap;
+  }
+  .ghost-btn{
+    border:1px solid var(--line);
+    background:transparent;
+    color:var(--ink-soft);
+    font-size:12px;
+    padding:7px 12px;
+    border-radius:3px;
+    cursor:pointer;
+    font-family:'Noto Sans KR',sans-serif;
+    white-space:nowrap;
+  }
+  .ghost-btn:hover{border-color:var(--ink-soft); color:var(--ink);}
+
+  .content{max-width:1180px; margin:0 auto; padding:28px 32px 60px;}
+
+  /* ---------- room select ---------- */
+  .select-intro{margin-bottom:22px;}
+  .select-intro h2{font-family:'Noto Serif KR',serif; font-size:19px; margin:0 0 6px;}
+  .select-intro p{font-size:13px; color:var(--ink-soft); margin:0;}
+  .room-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(180px,1fr));
+    gap:14px;
+  }
+  .room-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:18px 16px;
+    cursor:pointer;
+    text-align:left;
+    position:relative;
+    transition:box-shadow .15s ease, transform .15s ease, border-color .15s ease;
+  }
+  .room-card:hover{box-shadow:var(--shadow); transform:translateY(-2px); border-color:var(--ink-soft);}
+  .room-card .no{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--seal);
+    letter-spacing:.06em;
+    display:block;
+    margin-bottom:10px;
+  }
+  .room-card .name{font-family:'Noto Serif KR',serif; font-size:17px; font-weight:700;}
+  .room-card .status-chip{
+    display:inline-block; margin-top:10px; font-size:10.5px;
+    padding:2px 8px; border-radius:20px; font-family:'IBM Plex Mono',monospace;
+  }
+  .chip-none{background:#EEE; color:#8A8A8A;}
+  .chip-draft{background:var(--amber-soft); color:var(--amber);}
+  .chip-submitted{background:var(--teal-soft); color:var(--teal);}
+
+  /* ---------- shop view ---------- */
+  .shop-topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:18px; flex-wrap:wrap; gap:10px;
+  }
+  .shop-room-tag{
+    font-family:'Noto Serif KR',serif; font-size:18px; font-weight:700;
+    display:flex; align-items:center; gap:10px;
+  }
+  .shop-room-tag .no{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--seal); font-weight:500;}
+  .status-line{font-size:11.5px; color:var(--ink-soft); font-family:'IBM Plex Mono',monospace;}
+
+  .shop-layout{
+    display:grid;
+    grid-template-columns:150px 1fr 320px;
+    gap:20px;
+    align-items:start;
+  }
+  @media (max-width:900px){
+    .shop-layout{grid-template-columns:1fr; }
+    .cat-rail{display:flex; overflow-x:auto; gap:6px; width:100%;}
+  }
+
+  .cat-rail{display:flex; flex-direction:column; gap:4px; position:sticky; top:16px;}
+  .cat-btn{
+    text-align:left; background:transparent; border:none; border-left:2px solid transparent;
+    padding:9px 10px; font-size:13px; color:var(--ink-soft); cursor:pointer; border-radius:2px;
+    display:flex; justify-content:space-between; gap:6px; white-space:nowrap;
+  }
+  .cat-btn.active{border-left-color:var(--seal); color:var(--ink); background:var(--card); font-weight:700;}
+  .cat-btn:hover{color:var(--ink);}
+  .cat-btn .cnt{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--ink-soft);}
+
+  .item-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(210px,1fr));
+    gap:12px;
+    align-content:start;
+  }
+  .item-card{
+    background:var(--card); border:1px solid var(--line); border-radius:4px;
+    padding:14px; display:flex; flex-direction:column; gap:8px;
+    transition:border-color .15s ease;
+  }
+  .item-card.in-cart{border-color:var(--teal);}
+  .item-card .iname{font-size:14px; font-weight:600;}
+  .item-card .iunit{font-size:12px; color:var(--ink-soft);}
+  .qty-row{display:flex; align-items:center; justify-content:space-between; margin-top:10px;}
+  .qty-ctl{display:flex; align-items:center; border:1px solid var(--line); border-radius:20px; overflow:hidden;}
+  .qty-ctl button{
+    width:28px; height:28px; border:none; background:var(--card); color:var(--ink); cursor:pointer; font-size:14px;
+  }
+  .qty-ctl button:hover{background:var(--paper);}
+  .qty-ctl .qn{width:32px; text-align:center; font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600;}
+
+  .custom-box{
+    background:var(--card); border:1px dashed var(--line); border-radius:4px; padding:14px; margin-top:16px;
+  }
+  .custom-box h4{margin:0 0 8px; font-size:12.5px; color:var(--ink-soft); font-weight:700;}
+  .custom-box .row{display:flex; gap:6px; flex-wrap:wrap;}
+  .custom-box input{
+    border:1px solid var(--line); border-radius:3px; padding:7px 8px; font-size:12.5px; font-family:'Noto Sans KR',sans-serif;
+  }
+  .custom-box input.f-name{flex:2; min-width:120px;}
+  .custom-box input.f-qty{width:60px;}
+  .custom-box input.f-note{flex:2; min-width:100px;}
+  .custom-box .add-btn{
+    background:var(--ink); color:#fff; border:none; padding:7px 14px; border-radius:3px; font-size:12.5px; cursor:pointer;
+  }
+
+  /* ---------- cart / order slip ---------- */
+  .cart-panel{
+    background:var(--card); border:1px solid var(--line); border-radius:4px;
+    position:sticky; top:16px; overflow:hidden;
+  }
+  .cart-head{padding:14px 16px 10px; border-bottom:1px dashed var(--line);}
+  .cart-head h3{margin:0; font-family:'Noto Serif KR',serif; font-size:15px;}
+  .cart-body{padding:6px 16px; max-height:360px; overflow-y:auto;}
+  .cart-line{
+    display:flex; justify-content:space-between; align-items:center; gap:8px;
+    padding:9px 0; border-bottom:1px solid #F0F0EC; font-size:12.5px;
+  }
+  .cart-line .cname{flex:1;}
+  .cart-line .cname .tag{font-size:10px; color:var(--seal); margin-left:4px;}
+  .cart-line .cqty{font-family:'IBM Plex Mono',monospace; color:var(--ink); font-weight:600; white-space:nowrap;}
+  .cart-line .rm{background:none;border:none;color:var(--ink-soft); cursor:pointer; font-size:14px; line-height:1;}
+  .cart-line .rm:hover{color:var(--seal);}
+  .cart-empty{padding:24px 0; text-align:center; color:var(--ink-soft); font-size:12.5px;}
+  .cart-foot{padding:12px 16px 16px; border-top:1px dashed var(--line);}
+  .cart-total{display:flex; justify-content:space-between; font-family:'IBM Plex Mono',monospace; font-size:14px; font-weight:600; margin-bottom:10px;}
+  .submit-btn{
+    width:100%; background:var(--seal); color:#fff; border:none; padding:11px; border-radius:3px;
+    font-size:13.5px; font-weight:700; cursor:pointer; letter-spacing:.02em;
+  }
+  .submit-btn:hover{opacity:.92;}
+  .submit-btn.secondary{background:transparent; color:var(--ink-soft); border:1px solid var(--line); margin-top:8px;}
+
+  .seal-mark{
+    position:absolute; top:10px; right:14px; width:64px; height:64px; border-radius:50%;
+    border:2px solid var(--seal); color:var(--seal); display:flex; align-items:center; justify-content:center;
+    transform:rotate(-11deg); font-family:'Noto Serif KR',serif; font-weight:700; font-size:10px; text-align:center;
+    line-height:1.2; opacity:.9; pointer-events:none;
+  }
+
+  .toast{
+    position:fixed; bottom:22px; left:50%; transform:translateX(-50%);
+    background:var(--ink); color:#fff; padding:9px 18px; border-radius:20px; font-size:12.5px;
+    opacity:0; transition:opacity .25s ease; pointer-events:none; z-index:50;
+  }
+  .toast.show{opacity:1;}
+
+  .admin-login{max-width:360px; margin:60px auto; background:var(--card); border:1px solid var(--line); padding:28px; border-radius:4px; text-align:center;}
+  .admin-login h3{font-family:'Noto Serif KR',serif; margin:0 0 6px;}
+  .admin-login p{font-size:12.5px; color:var(--ink-soft); margin:0 0 16px;}
+  .admin-login input{
+    width:100%; padding:10px; border:1px solid var(--line); border-radius:3px; text-align:center;
+    font-family:'IBM Plex Mono',monospace; font-size:16px; letter-spacing:.3em; margin-bottom:10px;
+  }
+  .admin-login .go{width:100%; background:var(--ink); color:#fff; border:none; padding:10px; border-radius:3px; cursor:pointer; font-size:13px;}
+  .admin-login .err{color:var(--seal); font-size:11.5px; margin-top:8px; min-height:14px;}
+  .btn-group{display:flex; gap:8px; flex-wrap:wrap;}
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  // 💡 중요: 1단계에서 복사한 구글 웹 앱 URL 주소를 아래 따옴표 안에 붙여넣으세요!
+  const GOOGLE_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzl3sIwLgasFRuig2gqxPf5f-nGYEqnuHfqXzzwCMxuIK38dGJw3xl0CV25ZjMd7MPy/exec";
+
+  const ROOMS = [
+    {key:'admin', name:'본교무실', no:'01'},
+    {key:'admin', name:'교무실2', no:'02'},
+    {key:'Grade1', name:'1연구실', no:'03'},
+    {key:'Grade2', name:'2연구실', no:'04'},
+    {key:'Grade3', name:'3연구실', no:'05'},
+    {key:'counsel', name:'상담실', no:'06'},
+    {key:'Student Affairs', name:'인성인권부', no:'07'},
+    {key:'library', name:'도서관', no:'08'},
+    {key:'gym', name:'체육실', no:'9'},
+  ];
+
+  const CATEGORIES = [
+    {key:'Art', name:'제도용품'},
+    {key:'Writing', name:'필기구'},
+    {key:'Equipment', name:'사무용품'},
+    {key:'Filing', name:'파일/바인더'},
+    {key:'Paper', name:'라벨지'},
+    {key:'Electronic', name:'전산용품'},
+    {key:'Etc', name:'기타용품'},
+
+  ];
+
+  const CATALOG = [
+    {id:'A1', cat:'Art', name:'방안 컷팅자(30cm)', unit:'개'},
+    {id:'W1', cat:'Writing', name:'3색 볼펜(0.5mm)', unit:'개'},
+    {id:'W2', cat:'Writing', name:'컴퓨터용 사인펜', unit:'다스(12개입)'},
+    {id:'W3', cat:'Writing', name:'3색 형광펜', unit:'개(3개입)'},
+    {id:'W4', cat:'Writing', name:'네임펜(흑색)', unit:'개'},
+    {id:'W5', cat:'Writing', name:'네임펜(적색)', unit:'개'},
+    {id:'W6', cat:'Writing', name:'네임펜(청색)', unit:'개'},
+    {id:'W7', cat:'Writing', name:'보드마카(흑색)', unit:'다스(12개입)'},
+    {id:'W8', cat:'Writing', name:'보드마카(적색)', unit:'다스(12개입)'},
+    {id:'W9', cat:'Writing', name:'보드마카(청색)', unit:'다스(12개입)'},
+    {id:'W10', cat:'Writing', name:'제도샤프(0.5mm)', unit:'개'},
+    {id:'W11', cat:'Writing', name:'칼라 오토피드 연필깍이(76*52*61)', unit:'개'},
+    {id:'E1', cat:'Equipment', name:'수정테이프', unit:'개'},
+    {id:'E2', cat:'Equipment', name:'미니지우개', unit:'개'},
+    {id:'E3', cat:'Equipment', name:'클리어파일(A4)', unit:'팩(10개입)'},
+    {id:'E4', cat:'Equipment', name:'커팅매트(A4,녹색)', unit:'개'},
+    {id:'E5', cat:'Equipment', name:'칼라원형자석홀더(소, 20mm)', unit:'곽(96개입)'},
+    {id:'E6', cat:'Equipment', name:'칼라원형자석홀더(중, 27mm)', unit:'곽(30개입)'},
+    {id:'E7', cat:'Equipment', name:'칼라원형자석홀더(대, 32mm)', unit:'곽(24개입)'},
+    {id:'E8', cat:'Equipment', name:'칼라원형자석홀더(특대, 38mm)', unit:'곽(20개입)'},
+    {id:'E9', cat:'Equipment', name:'큐브 자석홀더(체스형)', unit:'곽(10개입)'},
+    {id:'E10', cat:'Equipment', name:'고무자석테이프(20mm*5M)', unit:'개'},
+    {id:'E11', cat:'Equipment', name:'평화더블클립(특대, 50mm)', unit:'곽(10개입)'},
+    {id:'E12', cat:'Equipment', name:'평화더블클립(대, 38mm)', unit:'곽(30개입)'},
+    {id:'E13', cat:'Equipment', name:'평화더블클립(중, 25mm)', unit:'곽(50개입)'},
+    {id:'E14', cat:'Equipment', name:'평화더블클립(소, 19mm)', unit:'곽(50개입)'},
+    {id:'E15', cat:'Equipment', name:'평화더블클립(특소, 15mm)', unit:'곽(100개입)'},
+    {id:'E16', cat:'Equipment', name:'평화크립600', unit:'곽'},
+    {id:'E17', cat:'Equipment', name:'날크립 나이스러(중)', unit:'개'},
+    {id:'E18', cat:'Equipment', name:'날크립(중)', unit:'곽(40개입)'},
+    {id:'E19', cat:'Equipment', name:'사무용 커터(칼)', unit:'개'},
+    {id:'E20', cat:'Equipment', name:'사무용 가위', unit:'개'},
+    {id:'E21', cat:'Equipment', name:'스테플러 352', unit:'개'},
+    {id:'E22', cat:'Equipment', name:'스테플러심 33호침(5000피스)', unit:'곽'},
+    {id:'E23', cat:'Equipment', name:'플러스 손가락골무(중)', unit:'세트(2개입)'},
+    {id:'E24', cat:'Equipment', name:'딱풀(25g)', unit:'개'},
+    {id:'E25', cat:'Equipment', name:'투명OPP테이프(대, 48mm*40M)', unit:'개'},
+    {id:'E26', cat:'Equipment', name:'투명OPP테이프(2분할, 24mm*40M)', unit:'개'},
+    {id:'E27', cat:'Equipment', name:'투명OPP테이프(3분할, 16mm*40M)', unit:'개'},
+    {id:'E28', cat:'Equipment', name:'양면테이프(대, 48mm*40M)', unit:'개'},
+    {id:'E29', cat:'Equipment', name:'양면테이프(2분할, 24mm*40M)', unit:'개'},
+    {id:'E30', cat:'Equipment', name:'양면테이프(3분할, 16mm*40M)', unit:'개'},
+    {id:'E31', cat:'Equipment', name:'스카치 투명테이프(12mm*20M)', unit:'개'},
+    {id:'E32', cat:'Equipment', name:'포스트잇(102*76mm)', unit:'개'},
+    {id:'E33', cat:'Equipment', name:'포스트잇(51*38mm)', unit:'개'},
+    {id:'E34', cat:'Equipment', name:'포스트잇(51*76mm)', unit:'개'},
+    {id:'E35', cat:'Equipment', name:'포스트잇(76*76mm)', unit:'개'},
+    {id:'E36', cat:'Equipment', name:'포스트잇(51*51mm)', unit:'개'},
+    {id:'E37', cat:'Equipment', name:'플래그 분류용(종이, 670-5AN 5개입)', unit:'팩'},
+    {id:'E38', cat:'Equipment', name:'플래그 분류용(필름, 683-9KN 10장*9색)', unit:'팩'},
+
+    {id:'F1', cat:'Filing', name:'친환경 컬러정부파일(A4)', unit:'팩(10개입)'},
+    {id:'F2', cat:'Filing', name:'고투명 클리어 L홀더(A4)', unit:'팩(10개입)'},
+    {id:'F3', cat:'Filing', name:'둥근 쫄대 파일(A4)', unit:'팩(10개입)'},
+    {id:'F4', cat:'Filing', name:'네오 크립보드(A4)', unit:'개'},
+    {id:'F5', cat:'Filing', name:'반투명 인덱스 클리어화일(A4, 10p)', unit:'개'},    
+    {id:'F6', cat:'Filing', name:'출력용 상장용지(로얄G1)', unit:'팩(100매)'},
+ 
+    {id:'P1', cat:'Paper', name:'폼텍 3130(A4 전지)', unit:'팩(100개입)'},
+    {id:'P2', cat:'Paper', name:'폼텍 3107(16칸)', unit:'팩(100개입)'},
+    {id:'P3', cat:'Paper', name:'폼텍 3109(18칸)', unit:'팩(100개입)'},
+    {id:'P4', cat:'Paper', name:'폼텍 3104(27칸)', unit:'팩(100개입)'},
+
+    {id:'E1', cat:'Equipment', name:'A3코팅지(100mic)', unit:'권(100매)'},
+    {id:'E2', cat:'Equipment', name:'A4코팅지(100mic)', unit:'권(100매)'},
+    {id:'E3', cat:'Equipment', name:'B4코팅지(100mic)', unit:'권(100매)'},
+
+    {id:'Et1', cat:'Etc', name:'극세사 칠판지우개', unit:'개'},
+    {id:'Et2', cat:'Etc', name:'보드마카 지우개', unit:'개'},
+  ];
+
+  const ADMIN_PIN = '1234';
+
+  // 💡 각 실별 독립 데이터 저장소 (내 컴퓨터 브라우저 로컬 저장소 활용)
+  let roomDataStore = {};
+
+  function loadAllLocalStore() {
+    try {
+      const saved = localStorage.getItem('school_office_supplies_data');
+      if(saved) roomDataStore = JSON.parse(saved);
+    } catch(e) {}
+  }
+
+  function saveLocalStore() {
+    try {
+      localStorage.setItem('school_office_supplies_data', JSON.stringify(roomDataStore));
+    } catch(e) {}
+  }
+
+  let state = {
+    view:'select',
+    room:null,
+    cart:{},          
+    customItems:[],   
+    status:'draft',
+    updatedAt:null,
+    submittedAt:null,
+    activeCat:CATEGORIES[0].key,
+    adminErr:'',
+  };
+
+  const app = document.getElementById('app');
+  const toastEl = document.getElementById('toast');
+  let customIdSeq = 1;
+
+  function showToast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    setTimeout(()=>toastEl.classList.remove('show'), 1600);
+  }
+
+  function fmtTime(iso){
+    if(!iso) return '-';
+    const d = new Date(iso);
+    return d.getFullYear()+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+String(d.getDate()).padStart(2,'0')+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+  }
+
+  function cartTotalQty(){
+    let n = 0;
+    Object.values(state.cart).forEach(q=>n+=q);
+    state.customItems.forEach(c=>n+=c.qty);
+    return n;
+  }
+
+  function loadRoomData(roomKey){
+    loadAllLocalStore();
+    const data = roomDataStore[roomKey] || {};
+    state.cart = data.cart || {};
+    state.customItems = data.customItems || [];
+    state.status = data.status || 'draft';
+    state.updatedAt = data.updatedAt || null;
+    state.submittedAt = data.submittedAt || null;
+  }
+
+  async function persist(submit){
+    if(!state.room) return;
+
+    if(submit===true){ state.status='submitted'; state.submittedAt = new Date().toISOString(); }
+    if(submit===false){ state.status='draft'; }
+    state.updatedAt = new Date().toISOString();
+
+    // 1. 내 컴퓨터 브라우저에 해당 실 독립 데이터 저장
+    roomDataStore[state.room.key] = {
+      cart: state.cart,
+      customItems: state.customItems,
+      status: state.status,
+      updatedAt: state.updatedAt,
+      submittedAt: state.submittedAt
+    };
+    saveLocalStore();
+
+    // 2. 구글 시트로 데이터 전송
+    const payload = {
+      roomKey: state.room.key,
+      roomName: state.room.name,
+      cart: state.cart,
+      customItems: state.customItems,
+      status: state.status,
+    };
+    
+    try{
+      await fetch(GOOGLE_WEBAPP_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+    }catch(e){ showToast('구글 시트 전송 실패'); }
+  }
+
+  let saveTimer=null;
+  function autosave(){
+    if(saveTimer) clearTimeout(saveTimer);
+    saveTimer = setTimeout(()=>{ persist(); showToast('자동 저장됨'); }, 500);
+  }
+
+  function render(){
+    if(state.view==='select') return renderSelect();
+    if(state.view==='shop') return renderShop();
+    if(state.view==='admin-login') return renderAdminLogin();
+    if(state.view==='admin') return renderAdmin();
+  }
+
+  function header(sub, right){
+    return `
+      <div class="doc-header">
+        <div class="row">
+          <div>
+            <div class="eyebrow">제3호 서식 · 실별 대표교사용</div>
+            <h1> 신학기 사무용품 신청</h1>
+            <div class="sub">${sub}</div>
+          </div>
+          <div>${right||''}</div>
+        </div>
+      </div>`;
+  }
+
+  function renderSelect(){
+    loadAllLocalStore();
+    const cards = ROOMS.map(r=>{
+      const rData = roomDataStore[r.key] || {};
+      const st = rData.status || 'none';
+      const chip = st==='submitted' ? '<span class="status-chip chip-submitted">제출완료</span>'
+                 : st==='draft' ? '<span class="status-chip chip-draft">작성중</span>'
+                 : '<span class="status-chip chip-none">미시작</span>';
+      return `<button class="room-card" data-action="select-room" data-room="${r.key}">
+        <span class="no">FORM NO.${r.no}</span>
+        <span class="name">${r.name}</span><br/>${chip}
+      </button>`;
+    }).join('');
+
+    app.innerHTML = `
+      ${header('신학기 사무용품 구입을 위해 담당하시는 실을 선택해주세요.', '<button class="ghost-btn" data-action="go-admin">교무실무사 합산</button>')}
+      <div class="content">
+        <div class="select-intro">
+          <h2>실 선택</h2>
+          <p>선택한 실의 신청 내역만 독립적으로 저장 및 표시됩니다.</p>
+        </div>
+        <div class="room-grid">${cards}</div>
+      </div>`;
+  }
+
+  function renderShop(){
+    const statusText = state.status==='submitted'
+      ? `제출완료 · 최종 수정 ${fmtTime(state.updatedAt)}`
+      : (state.updatedAt ? `작성중 · 자동저장 ${fmtTime(state.updatedAt)}` : '작성중 · 아직 저장된 내용 없음');
+
+    const catRail = CATEGORIES.map(c=>{
+      const cnt = CATALOG.filter(it=>it.cat===c.key).reduce((s,it)=> s + (state.cart[it.id]||0), 0);
+      return `<button class="cat-btn ${state.activeCat===c.key?'active':''}" data-action="set-cat" data-cat="${c.key}">
+        <span>${c.name}</span>${cnt? `<span class="cnt">${cnt}</span>`:''}
+      </button>`;
+    }).join('');
+
+    const items = CATALOG.filter(it=>it.cat===state.activeCat).map(it=>{
+      const q = state.cart[it.id]||0;
+      return `<div class="item-card ${q>0?'in-cart':''}">
+        <div class="iname">${it.name}</div>
+        <div class="iunit">${it.unit}</div>
+        <div class="qty-row">
+          <div class="qty-ctl">
+            <button data-action="dec" data-id="${it.id}">−</button>
+            <span class="qn">${q}</span>
+            <button data-action="inc" data-id="${it.id}">＋</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+
+    const catalogLines = Object.entries(state.cart).filter(([,q])=>q>0).map(([id,q])=>{
+      const it = CATALOG.find(c=>c.id===id);
+      if(!it) return '';
+      return `<div class="cart-line">
+        <div class="cname">${it.name}</div>
+        <div class="cqty">${q} ${it.unit.replace(/\(.+\)/,'')}</div>
+        <button class="rm" data-action="rm-cat" data-id="${id}">✕</button>
+      </div>`;
+    }).join('');
+
+    const customLines = state.customItems.map(c=>`
+      <div class="cart-line">
+        <div class="cname">${c.name}<span class="tag">기타</span>${c.note? ' · '+c.note:''}</div>
+        <div class="cqty">${c.qty}개</div>
+        <button class="rm" data-action="rm-custom" data-id="${c.id}">✕</button>
+      </div>`).join('');
+
+    const hasLines = catalogLines || customLines;
+
+    const seal = state.status==='submitted'
+      ? `<div class="seal-mark">${state.room.name}<br/>제출완료<br/>${fmtTime(state.submittedAt).slice(0,10)}</div>` : '';
+
+    app.innerHTML = `
+      ${header('선택하신 실의 신청 내역만 표시됩니다.', '<button class="ghost-btn" data-action="back-select">← 다른 실 선택</button>')}
+      <div class="content">
+        <div class="shop-topbar">
+          <div>
+            <div class="shop-room-tag"><span class="no">FORM NO.${state.room.no}</span>${state.room.name} 신청서</div>
+            <div class="status-line">${statusText}</div>
+          </div>
+        </div>
+        <div class="shop-layout">
+          <div class="cat-rail">${catRail}</div>
+          <div>
+            <div class="item-grid">${items}</div>
+            <div class="custom-box">
+              <h4>목록에 없는 품목 추가</h4>
+              <div class="row">
+                <input class="f-name" id="cust-name" placeholder="품목명" />
+                <input class="f-qty" id="cust-qty" type="number" min="1" value="1" placeholder="수량" />
+                <input class="f-note" id="cust-note" placeholder="비고 (선택)" />
+                <button class="add-btn" data-action="add-custom">추가</button>
+              </div>
+            </div>
+          </div>
+          <div class="cart-panel" style="position:relative;">
+            ${seal}
+            <div class="cart-head"><h3>신청 내역</h3></div>
+            <div class="cart-body">
+              ${hasLines ? catalogLines+customLines : '<div class="cart-empty">아직 담은 품목이 없습니다.</div>'}
+            </div>
+            <div class="cart-foot">
+              <div class="cart-total"><span>총 수량</span><span>${cartTotalQty()}개</span></div>
+              ${state.status==='submitted'
+                ? `<button class="submit-btn secondary" data-action="unlock">수정 계속하기</button>`
+                : `<button class="submit-btn" data-action="submit">신청 제출하기</button>`}
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function renderAdminLogin(){
+    app.innerHTML = `
+      ${header('교무실무사 전용 화면입니다.', '<button class="ghost-btn" data-action="back-select">← 처음으로</button>')}
+      <div class="content">
+        <div class="admin-login">
+          <h3>교무실무사 인증</h3>
+          <p>PIN을 입력하면 관리 화면으로 이동합니다.</p>
+          <input id="pin-input" type="password" inputmode="numeric" maxlength="4" placeholder="••••" />
+          <button class="go" data-action="admin-enter">입장</button>
+          <div class="err">${state.adminErr}</div>
+        </div>
+      </div>`;
+    const pinInput = document.getElementById('pin-input');
+    if(pinInput) pinInput.focus();
+  }
+
+  function renderAdmin(){
+    app.innerHTML = `
+      ${header('실시간 신청 데이터는 연결된 구글 시트에서 직접 더 편리하게 확인하실 수 있습니다.',
+        `<div class="btn-group"><button class="ghost-btn" data-action="admin-logout">나가기</button></div>`)}
+      <div class="content">
+        <div class="select-intro">
+          <h2>통합 관리 안내</h2>
+          <p>현재 연동된 구글 시트의 [신청내역] 탭을 열어보시면, 각 실별로 제출한 수량이 실시간으로 정돈되어 쌓여있습니다.</p>
+        </div>
+      </div>`;
+  }
+
+  async function handleAction(action, el){
+    if(action==='select-room'){
+      const key = el.dataset.room;
+      state.room = ROOMS.find(r=>r.key===key);
+      state.activeCat = CATEGORIES[0].key;
+      loadRoomData(key); // 선택한 실 데이터만 개별 불러오기
+      state.view='shop';
+      render();
+      return;
+    }
+    if(action==='back-select'){ state.view='select'; state.room=null; render(); return; }
+    if(action==='go-admin'){ state.adminErr=''; state.view='admin-login'; render(); return; }
+    if(action==='set-cat'){ state.activeCat = el.dataset.cat; render(); return; }
+    if(action==='inc'){
+      const id = el.dataset.id;
+      state.cart[id] = (state.cart[id]||0) + 1;
+      render(); autosave(); return;
+    }
+    if(action==='dec'){
+      const id = el.dataset.id;
+      const cur = state.cart[id]||0;
+      if(cur<=1) delete state.cart[id]; else state.cart[id] = cur-1;
+      render(); autosave(); return;
+    }
+    if(action==='rm-cat'){ delete state.cart[el.dataset.id]; render(); autosave(); return; }
+    if(action==='rm-custom'){
+      state.customItems = state.customItems.filter(c=>c.id!==el.dataset.id);
+      render(); autosave(); return;
+    }
+    if(action==='add-custom'){
+      const name = document.getElementById('cust-name').value.trim();
+      const qty = parseInt(document.getElementById('cust-qty').value,10) || 1;
+      const note = document.getElementById('cust-note').value.trim();
+      if(!name){ showToast('품목명을 입력해주세요'); return; }
+      state.customItems.push({id:'custom-'+(customIdSeq++)+'-'+Date.now(), name, qty, note});
+      render(); autosave(); return;
+    }
+    if(action==='submit'){
+      if(cartTotalQty()===0){ showToast('담은 품목이 없습니다'); return; }
+      await persist(true);
+      render(); showToast('신청 내역이 구글 시트로 제출되었습니다'); return;
+    }
+    if(action==='unlock'){
+      await persist(false);
+      render(); showToast('수정 모드로 전환되었습니다'); return;
+    }
+    if(action==='admin-enter'){
+      const val = document.getElementById('pin-input').value;
+      if(val===ADMIN_PIN){ state.view='admin'; render(); } else { state.adminErr='PIN이 올바르지 않습니다.'; render(); }
+      return;
+    }
+    if(action==='admin-logout'){ state.view='select'; render(); return; }
+  }
+
+  app.addEventListener('click', (e)=>{
+    const el = e.target.closest('[data-action]');
+    if(!el) return;
+    handleAction(el.dataset.action, el);
+  });
+  app.addEventListener('keydown', (e)=>{
+    if(e.key==='Enter' && e.target.id==='pin-input'){ handleAction('admin-enter', e.target); }
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
