@@ -4,25 +4,25 @@
 <meta charset="UTF-8">
 <title>사무용품 신청 사이트</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700&family=Noto+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=IBM+Plex+Mono:wght@500;600&display=swap');
   
   :root{
-    --paper:#EEF2EF;
-    --card:#FFFFFF;
-    --ink:#1B2A4A;
-    --ink-soft:#5B6B7C;
-    --line:#C9D0C7;
-    --seal:#B23A2E;
-    --seal-soft:rgba(178,58,46,0.09);
-    --teal:#3F6659;
-    --teal-soft:rgba(63,102,89,0.10);
-    --amber:#A8752F;
-    --amber-soft:rgba(168,117,47,0.12);
-    --shadow: 0 1px 2px rgba(27,42,74,0.06), 0 6px 20px rgba(27,42,74,0.05);
+    --paper:#FFF0F3;              /* 살짝 밝은 연분홍 배경 */
+    --card:#FFFFFF;               /* 카드는 깔끔한 흰색 */
+    --ink:#2C131A;                /* 텍스트는 짙은 버건디/라즈베리 (시안성 최상) */
+    --ink-soft:#7A525D;           /* 보조 글자색 */
+    --line:#F4C2C2;               /* 테두리 부드러운 핑크 라인 */
+    --seal:#D81B60;               /* 제출완료/포인트 딥 핑크 */
+    --seal-soft:rgba(216,27,96,0.08);
+    --teal:#C2185B;               /* 카트/선택 강조용 강한 핑크 */
+    --teal-soft:rgba(194,24,91,0.10);
+    --amber:#E91E63;              /* 작성중 상태 핑크 */
+    --amber-soft:rgba(233,30,99,0.12);
+    --shadow: 0 2px 8px rgba(216,27,96,0.08), 0 4px 16px rgba(44,19,26,0.04);
   }
   *{box-sizing:border-box;}
   #app{
-    font-family:'Noto Sans KR', sans-serif;
+    font-family:'Noto Sans KR', 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
     background:var(--paper);
     color:var(--ink);
     min-height:100%;
@@ -30,8 +30,7 @@
     line-height:1.5;
   }
   .mono{font-family:'IBM Plex Mono', monospace;}
-  .serif{font-family:'Noto Serif KR', serif;}
-  
+
   /* ---------- doc header ---------- */
   .doc-header{
     padding:28px 32px 18px;
@@ -43,19 +42,22 @@
     font-size:11px;
     letter-spacing:.14em;
     color:var(--seal);
+    font-weight:700;
     text-transform:uppercase;
     margin-bottom:6px;
   }
   .doc-header h1{
-    font-family:'Noto Serif KR', serif;
-    font-weight:700;
-    font-size:22px;
+    font-family:'Noto Sans KR', sans-serif;
+    font-weight:900;
+    font-size:23px;
     margin:0 0 4px;
     color:var(--ink);
+    letter-spacing:-0.02em;
   }
   .doc-header .sub{
-    font-size:12.5px;
+    font-size:13px;
     color:var(--ink-soft);
+    font-weight:500;
   }
   .doc-header .row{
     display:flex;
@@ -66,22 +68,34 @@
   }
   .ghost-btn{
     border:1px solid var(--line);
-    background:transparent;
-    color:var(--ink-soft);
+    background:var(--paper);
+    color:var(--seal);
     font-size:12px;
-    padding:7px 12px;
-    border-radius:3px;
+    font-weight:700;
+    padding:8px 14px;
+    border-radius:6px;
     cursor:pointer;
     font-family:'Noto Sans KR',sans-serif;
     white-space:nowrap;
+    transition:all 0.2s ease;
   }
-  .ghost-btn:hover{border-color:var(--ink-soft); color:var(--ink);}
+  .ghost-btn:hover{
+    background:var(--seal); 
+    color:#fff; 
+    border-color:var(--seal);
+  }
   
   .content{max-width:1180px; margin:0 auto; padding:28px 32px 60px;}
   
   /* ---------- room select ---------- */
   .select-intro{margin-bottom:22px;}
-  .select-intro h2{font-family:'Noto Serif KR',serif; font-size:19px; margin:0 0 6px;}
+  .select-intro h2{
+    font-family:'Noto Sans KR',serif; 
+    font-size:20px; 
+    font-weight:700;
+    margin:0 0 6px;
+    color:var(--ink);
+  }
   .select-intro p{font-size:13px; color:var(--ink-soft); margin:0;}
   .room-grid{
     display:grid;
@@ -90,29 +104,39 @@
   }
   .room-card{
     background:var(--card);
-    border:1px solid var(--line);
-    border-radius:4px;
-    padding:18px 16px;
+    border:1.5px solid var(--line);
+    border-radius:8px;
+    padding:20px 16px;
     cursor:pointer;
     text-align:left;
     position:relative;
-    transition:box-shadow .15s ease, transform .15s ease, border-color .15s ease;
+    transition:box-shadow .2s ease, transform .2s ease, border-color .2s ease;
   }
-  .room-card:hover{box-shadow:var(--shadow); transform:translateY(-2px); border-color:var(--ink-soft);}
+  .room-card:hover{
+    box-shadow:var(--shadow); 
+    transform:translateY(-3px); 
+    border-color:var(--seal);
+  }
   .room-card .no{
     font-family:'IBM Plex Mono',monospace;
     font-size:11px;
     color:var(--seal);
+    font-weight:700;
     letter-spacing:.06em;
     display:block;
     margin-bottom:10px;
   }
-  .room-card .name{font-family:'Noto Serif KR',serif; font-size:17px; font-weight:700;}
-  .room-card .status-chip{
-    display:inline-block; margin-top:10px; font-size:10.5px;
-    padding:2px 8px; border-radius:20px; font-family:'IBM Plex Mono',monospace;
+  .room-card .name{
+    font-family:'Noto Sans KR',sans-serif; 
+    font-size:18px; 
+    font-weight:700;
+    color:var(--ink);
   }
-  .chip-none{background:#EEE; color:#8A8A8A;}
+  .room-card .status-chip{
+    display:inline-block; margin-top:10px; font-size:11px; font-weight:700;
+    padding:3px 10px; border-radius:20px; font-family:'Noto Sans KR',sans-serif;
+  }
+  .chip-none{background:#F0E6E8; color:#8C7379;}
   .chip-draft{background:var(--amber-soft); color:var(--amber);}
   .chip-submitted{background:var(--teal-soft); color:var(--teal);}
   
@@ -122,15 +146,15 @@
     margin-bottom:18px; flex-wrap:wrap; gap:10px;
   }
   .shop-room-tag{
-    font-family:'Noto Serif KR',serif; font-size:18px; font-weight:700;
-    display:flex; align-items:center; gap:10px;
+    font-family:'Noto Sans KR',sans-serif; font-size:19px; font-weight:700;
+    display:flex; align-items:center; gap:10px; color:var(--ink);
   }
-  .shop-room-tag .no{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--seal); font-weight:500;}
-  .status-line{font-size:11.5px; color:var(--ink-soft); font-family:'IBM Plex Mono',monospace;}
+  .shop-room-tag .no{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--seal); font-weight:700;}
+  .status-line{font-size:12px; color:var(--ink-soft); font-family:'Noto Sans KR',sans-serif; font-weight:500;}
   
   .shop-layout{
     display:grid;
-    grid-template-columns:150px 1fr 320px;
+    grid-template-columns:160px 1fr 320px;
     gap:20px;
     align-items:start;
   }
@@ -139,15 +163,19 @@
     .cat-rail{display:flex; overflow-x:auto; gap:6px; width:100%;}
   }
   
-  .cat-rail{display:flex; flex-direction:column; gap:4px; position:sticky; top:16px;}
+  .cat-rail{display:flex; flex-direction:column; gap:6px; position:sticky; top:16px;}
   .cat-btn{
-    text-align:left; background:transparent; border:none; border-left:2px solid transparent;
-    padding:9px 10px; font-size:13px; color:var(--ink-soft); cursor:pointer; border-radius:2px;
-    display:flex; justify-content:space-between; gap:6px; white-space:nowrap;
+    text-align:left; background:transparent; border:none; border-left:3px solid transparent;
+    padding:10px 12px; font-size:13.5px; color:var(--ink-soft); cursor:pointer; border-radius:4px;
+    display:flex; justify-content:space-between; gap:6px; white-space:nowrap; font-weight:500;
+    transition:all 0.15s ease;
   }
-  .cat-btn.active{border-left-color:var(--seal); color:var(--ink); background:var(--card); font-weight:700;}
-  .cat-btn:hover{color:var(--ink);}
-  .cat-btn .cnt{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--ink-soft);}
+  .cat-btn.active{
+    border-left-color:var(--seal); color:var(--seal); background:var(--card); font-weight:700;
+    box-shadow: 0 2px 6px rgba(216,27,96,0.06);
+  }
+  .cat-btn:hover{color:var(--seal);}
+  .cat-btn .cnt{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--seal); font-weight:700;}
   
   .item-grid{
     display:grid;
@@ -156,87 +184,91 @@
     align-content:start;
   }
   .item-card{
-    background:var(--card); border:1px solid var(--line); border-radius:4px;
-    padding:14px; display:flex; flex-direction:column; gap:8px;
-    transition:border-color .15s ease;
+    background:var(--card); border:1.5px solid var(--line); border-radius:8px;
+    padding:16px; display:flex; flex-direction:column; gap:8px;
+    transition:border-color .15s ease, box-shadow .15s ease;
   }
-  .item-card.in-cart{border-color:var(--teal);}
-  .item-card .iname{font-size:14px; font-weight:600;}
-  .item-card .iunit{font-size:12px; color:var(--ink-soft);}
+  .item-card.in-cart{border-color:var(--seal); background:#FFF9FA;}
+  .item-card .iname{font-size:14.5px; font-weight:700; color:var(--ink);}
+  .item-card .iunit{font-size:12px; color:var(--ink-soft); font-weight:500;}
   .qty-row{display:flex; align-items:center; justify-content:space-between; margin-top:10px;}
-  .qty-ctl{display:flex; align-items:center; border:1px solid var(--line); border-radius:20px; overflow:hidden;}
+  .qty-ctl{display:flex; align-items:center; border:1.5px solid var(--line); border-radius:20px; overflow:hidden; background:#fff;}
   .qty-ctl button{
-    width:28px; height:28px; border:none; background:var(--card); color:var(--ink); cursor:pointer; font-size:14px;
+    width:30px; height:30px; border:none; background:transparent; color:var(--seal); cursor:pointer; font-size:16px; font-weight:700;
   }
   .qty-ctl button:hover{background:var(--paper);}
-  .qty-ctl .qn{width:32px; text-align:center; font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600;}
+  .qty-ctl .qn{width:32px; text-align:center; font-family:'IBM Plex Mono',monospace; font-size:13.5px; font-weight:700; color:var(--ink);}
   
   .custom-box{
-    background:var(--card); border:1px dashed var(--line); border-radius:4px; padding:14px; margin-top:16px;
+    background:var(--card); border:1.5px dashed var(--line); border-radius:8px; padding:16px; margin-top:16px;
   }
-  .custom-box h4{margin:0 0 8px; font-size:12.5px; color:var(--ink-soft); font-weight:700;}
+  .custom-box h4{margin:0 0 10px; font-size:13px; color:var(--seal); font-weight:700;}
   .custom-box .row{display:flex; gap:6px; flex-wrap:wrap;}
   .custom-box input{
-    border:1px solid var(--line); border-radius:3px; padding:7px 8px; font-size:12.5px; font-family:'Noto Sans KR',sans-serif;
+    border:1px solid var(--line); border-radius:4px; padding:8px 10px; font-size:12.5px; font-family:'Noto Sans KR',sans-serif;
+    outline:none;
   }
+  .custom-box input:focus{border-color:var(--seal);}
   .custom-box input.f-name{flex:2; min-width:120px;}
   .custom-box input.f-qty{width:60px;}
   .custom-box input.f-note{flex:2; min-width:100px;}
   .custom-box .add-btn{
-    background:var(--ink); color:#fff; border:none; padding:7px 14px; border-radius:3px; font-size:12.5px; cursor:pointer;
+    background:var(--seal); color:#fff; border:none; padding:8px 16px; border-radius:4px; font-size:12.5px; font-weight:700; cursor:pointer;
   }
+  .custom-box .add-btn:hover{opacity:0.9;}
   
   /* ---------- cart / order slip ---------- */
   .cart-panel{
-    background:var(--card); border:1px solid var(--line); border-radius:4px;
-    position:sticky; top:16px; overflow:hidden;
+    background:var(--card); border:1.5px solid var(--line); border-radius:8px;
+    position:sticky; top:16px; overflow:hidden; box-shadow:var(--shadow);
   }
-  .cart-head{padding:14px 16px 10px; border-bottom:1px dashed var(--line);}
-  .cart-head h3{margin:0; font-family:'Noto Serif KR',serif; font-size:15px;}
-  .cart-body{padding:6px 16px; max-height:360px; overflow-y:auto;}
+  .cart-head{padding:16px 18px 12px; border-bottom:1px dashed var(--line); background:#FFF9FA;}
+  .cart-head h3{margin:0; font-family:'Noto Sans KR',sans-serif; font-size:16px; font-weight:700; color:var(--seal);}
+  .cart-body{padding:8px 18px; max-height:360px; overflow-y:auto;}
   .cart-line{
     display:flex; justify-content:space-between; align-items:center; gap:8px;
-    padding:9px 0; border-bottom:1px solid #F0F0EC; font-size:12.5px;
+    padding:10px 0; border-bottom:1px solid #FCE8EC; font-size:13px;
   }
-  .cart-line .cname{flex:1;}
-  .cart-line .cname .tag{font-size:10px; color:var(--seal); margin-left:4px;}
-  .cart-line .cqty{font-family:'IBM Plex Mono',monospace; color:var(--ink); font-weight:600; white-space:nowrap;}
-  .cart-line .rm{background:none;border:none;color:var(--ink-soft); cursor:pointer; font-size:14px; line-height:1;}
+  .cart-line .cname{flex:1; font-weight:500;}
+  .cart-line .cname .tag{font-size:10px; color:var(--seal); font-weight:700; margin-left:4px; background:var(--paper); padding:2px 5px; border-radius:3px;}
+  .cart-line .cqty{font-family:'IBM Plex Mono',monospace; color:var(--seal); font-weight:700; white-space:nowrap;}
+  .cart-line .rm{background:none;border:none;color:var(--ink-soft); cursor:pointer; font-size:15px; line-height:1;}
   .cart-line .rm:hover{color:var(--seal);}
-  .cart-empty{padding:24px 0; text-align:center; color:var(--ink-soft); font-size:12.5px;}
-  .cart-foot{padding:12px 16px 16px; border-top:1px dashed var(--line);}
-  .cart-total{display:flex; justify-content:space-between; font-family:'IBM Plex Mono',monospace; font-size:14px; font-weight:600; margin-bottom:10px;}
+  .cart-empty{padding:30px 0; text-align:center; color:var(--ink-soft); font-size:13px;}
+  .cart-foot{padding:14px 18px 18px; border-top:1px dashed var(--line); background:#FFF9FA;}
+  .cart-total{display:flex; justify-content:space-between; font-family:'Noto Sans KR',sans-serif; font-size:14.5px; font-weight:700; margin-bottom:12px; color:var(--ink);}
   .submit-btn{
-    width:100%; background:var(--seal); color:#fff; border:none; padding:11px; border-radius:3px;
-    font-size:13.5px; font-weight:700; cursor:pointer; letter-spacing:.02em;
+    width:100%; background:var(--seal); color:#fff; border:none; padding:12px; border-radius:6px;
+    font-size:14px; font-weight:700; cursor:pointer; letter-spacing:.02em; transition:opacity 0.2s ease;
   }
   .submit-btn:hover{opacity:.92;}
-  .submit-btn.secondary{background:transparent; color:var(--ink-soft); border:1px solid var(--line); margin-top:8px;}
-  .submit-btn.danger{background:transparent; color:var(--seal); border:1px solid var(--seal); margin-top:8px;}
+  .submit-btn.secondary{background:transparent; color:var(--ink-soft); border:1.5px solid var(--line); margin-top:8px;}
+  .submit-btn.danger{background:transparent; color:var(--seal); border:1.5px solid var(--seal); margin-top:8px;}
   
   .seal-mark{
-    position:absolute; top:10px; right:14px; width:64px; height:64px; border-radius:50%;
-    border:2px solid var(--seal); color:var(--seal); display:flex; align-items:center; justify-content:center;
-    transform:rotate(-11deg); font-family:'Noto Serif KR',serif; font-weight:700; font-size:10px; text-align:center;
-    line-height:1.2; opacity:.9; pointer-events:none;
+    position:absolute; top:12px; right:14px; width:70px; height:70px; border-radius:50%;
+    border:2.5px solid var(--seal); color:var(--seal); display:flex; align-items:center; justify-content:center;
+    transform:rotate(-11deg); font-family:'Noto Sans KR',sans-serif; font-weight:900; font-size:11px; text-align:center;
+    line-height:1.2; opacity:.9; pointer-events:none; background:rgba(255,255,255,0.8);
   }
   
   .toast{
-    position:fixed; bottom:22px; left:50%; transform:translateX(-50%);
-    background:var(--ink); color:#fff; padding:9px 18px; border-radius:20px; font-size:12.5px;
-    opacity:0; transition:opacity .25s ease; pointer-events:none; z-index:50;
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+    background:var(--ink); color:#fff; padding:10px 22px; border-radius:25px; font-size:13px; font-weight:500;
+    opacity:0; transition:opacity .25s ease; pointer-events:none; z-index:50; box-shadow:0 4px 12px rgba(0,0,0,0.15);
   }
   .toast.show{opacity:1;}
   
-  .admin-login{max-width:360px; margin:60px auto; background:var(--card); border:1px solid var(--line); padding:28px; border-radius:4px; text-align:center;}
-  .admin-login h3{font-family:'Noto Serif KR',serif; margin:0 0 6px;}
-  .admin-login p{font-size:12.5px; color:var(--ink-soft); margin:0 0 16px;}
+  .admin-login{max-width:360px; margin:60px auto; background:var(--card); border:1.5px solid var(--line); padding:32px; border-radius:8px; text-align:center; box-shadow:var(--shadow);}
+  .admin-login h3{font-family:'Noto Sans KR',sans-serif; font-size:18px; font-weight:700; margin:0 0 6px; color:var(--seal);}
+  .admin-login p{font-size:13px; color:var(--ink-soft); margin:0 0 18px;}
   .admin-login input{
-    width:100%; padding:10px; border:1px solid var(--line); border-radius:3px; text-align:center;
-    font-family:'IBM Plex Mono',monospace; font-size:16px; letter-spacing:.3em; margin-bottom:10px;
+    width:100%; padding:12px; border:1.5px solid var(--line); border-radius:6px; text-align:center;
+    font-family:'IBM Plex Mono',monospace; font-size:18px; letter-spacing:.3em; margin-bottom:12px; outline:none;
   }
-  .admin-login .go{width:100%; background:var(--ink); color:#fff; border:none; padding:10px; border-radius:3px; cursor:pointer; font-size:13px;}
-  .admin-login .err{color:var(--seal); font-size:11.5px; margin-top:8px; min-height:14px;}
+  .admin-login input:focus{border-color:var(--seal);}
+  .admin-login .go{width:100%; background:var(--seal); color:#fff; border:none; padding:12px; border-radius:6px; cursor:pointer; font-size:14px; font-weight:700;}
+  .admin-login .err{color:var(--seal); font-size:12px; margin-top:10px; min-height:14px; font-weight:500;}
   .btn-group{display:flex; gap:8px; flex-wrap:wrap;}
 </style>
 </head>
@@ -341,7 +373,7 @@
   const ADMIN_PIN = '1234';
   
   let roomDataStore = {};
-  let serverRoomsStatus = {}; // 구글 시트에서 받아온 실제 제출 현황
+  let serverRoomsStatus = {};
   
   function loadAllLocalStore() {
     try {
@@ -391,7 +423,6 @@
     return n;
   }
   
-  // 구글 시트에서 각 실의 실제 제출 상태 동기화
   async function syncServerStatus(){
     try {
       const res = await fetch(GOOGLE_WEBAPP_URL);
@@ -410,7 +441,6 @@
     state.cart = data.cart || {};
     state.customItems = data.customItems || [];
     
-    // 구글 시트에 제출된 상태인지 우선 확인
     if (serverRoomsStatus[state.room.name] === 'submitted') {
       state.status = 'submitted';
     } else if (cartTotalQty() === 0) {
@@ -510,7 +540,7 @@
   
   async function renderSelect(){
     loadAllLocalStore();
-    await syncServerStatus(); // 구글 시트에서 최신 제출 상태 불러오기
+    await syncServerStatus();
     
     const cards = ROOMS.map(r=>{
       const isSubmittedOnServer = serverRoomsStatus[r.name] === 'submitted';
