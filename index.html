@@ -1209,58 +1209,105 @@
   .content{max-width:1180px; margin:0 auto; padding:28px 32px 60px;}
   
   /* ---------- room select ---------- */
-  .select-intro{margin-bottom:22px;}
+ .select-intro{
+    margin-bottom:28px;
+  }
+
   .select-intro h2{
-    font-family:'Noto Sans KR',serif; 
-    font-size:20px; 
+    font-family:'Noto Sans KR',sans-serif;
+    font-size:22px;
     font-weight:700;
-    margin:0 0 6px;
+    margin:0 0 7px;
     color:var(--ink);
   }
-  .select-intro p{font-size:13px; color:var(--ink-soft); margin:0;}
+
+  .select-intro p{
+    font-size:14px;
+    color:var(--ink-soft);
+    margin:0;
+  }
+
   .room-grid{
     display:grid;
-    grid-template-columns:repeat(auto-fill, minmax(180px,1fr));
-    gap:14px;
+    grid-template-columns:repeat(auto-fit, minmax(235px, 1fr));
+    gap:18px;
   }
+
   .room-card{
+    width:100%;
+    min-height:150px;
     background:var(--card);
     border:1.5px solid var(--line);
-    border-radius:8px;
-    padding:20px 16px;
+    border-radius:10px;
+    padding:26px 20px;
     cursor:pointer;
     text-align:left;
     position:relative;
-    transition:box-shadow .2s ease, transform .2s ease, border-color .2s ease;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+
+    transition:
+      box-shadow .2s ease,
+      transform .2s ease,
+      border-color .2s ease,
+      background .2s ease;
   }
+
   .room-card:hover{
-    box-shadow:var(--shadow); 
-    transform:translateY(-3px); 
+    box-shadow:var(--shadow-hover);
+    transform:translateY(-4px);
     border-color:var(--seal);
+    background:#FFFDFD;
   }
+
+  .room-card:active{
+    transform:translateY(-1px);
+  }
+
   .room-card .no{
     font-family:'IBM Plex Mono',monospace;
-    font-size:11px;
+    font-size:13px;
     color:var(--seal);
     font-weight:700;
     letter-spacing:.06em;
     display:block;
-    margin-bottom:10px;
+    margin-bottom:12px;
   }
+
   .room-card .name{
-    font-family:'Noto Sans KR',sans-serif; 
-    font-size:18px; 
+    font-family:'Noto Sans KR',sans-serif;
+    font-size:23px;
     font-weight:700;
     color:var(--ink);
+    letter-spacing:-0.02em;
   }
+
   .room-card .status-chip{
-    display:inline-block; margin-top:10px; font-size:11px; font-weight:700;
-    padding:3px 10px; border-radius:20px; font-family:'Noto Sans KR',sans-serif;
+    display:inline-block;
+    width:max-content;
+    margin-top:13px;
+    font-size:13px;
+    font-weight:700;
+    padding:4px 12px;
+    border-radius:20px;
   }
-  .chip-none{background:#F0E6E8; color:#8C7379;}
-  .chip-draft{background:var(--amber-soft); color:var(--amber);}
-  .chip-submitted{background:var(--teal-soft); color:var(--teal);}
-  
+
+  .chip-none{
+    background:#F0E6E8;
+    color:#8C7379;
+  }
+
+  .chip-draft{
+    background:var(--amber-soft);
+    color:var(--amber);
+  }
+
+  .chip-submitted{
+    background:var(--teal-soft);
+    color:var(--teal);
+  }
   /* ---------- shop view ---------- */
   .shop-topbar{
     display:flex; align-items:center; justify-content:space-between;
