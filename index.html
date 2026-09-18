@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>신학기 사무용품 신청</title>
+<title>전주덕진중학교 신학기 사무용품 신청</title>
 <style>
   @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@600;700&display=swap');
@@ -642,16 +642,16 @@
   const GOOGLE_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyVpq9osDUKpx2NTh8bbAtzc8Kb6lJTpWLPhrEdyOY--vP4TGhS2EbZpgQ0inr4KaMv/exec";
   
   const ROOMS = [
-    {key:'admin1', name:'본교무실', no:'1'},
-    {key:'admin2', name:'교무실2', no:'2'},
-    {key:'Grade1', name:'1연구실', no:'3'},
-    {key:'Grade2', name:'2연구실', no:'4'},
-    {key:'Grade3', name:'3연구실', no:'5'},
-    {key:'counsel', name:'상담실', no:'6'},
-    {key:'StudentAffairs', name:'인성인권부', no:'7'},
-    {key:'library', name:'도서관', no:'8'},
-    {key:'gym', name:'체육실', no:'9'},
-    {key:'etf', name:'기타실', no:'10'},
+    {key:'admin1', name:'본교무실'},
+    {key:'admin2', name:'교무실2'},
+    {key:'Grade1', name:'1연구실'},
+    {key:'Grade2', name:'2연구실'},
+    {key:'Grade3', name:'3연구실'},
+    {key:'counsel', name:'상담실'},
+    {key:'StudentAffairs', name:'인성인권부'},
+    {key:'library', name:'도서관'},
+    {key:'gym', name:'체육실'},
+    {key:'etf', name:'기타실'},
   ];
   
   const CATEGORIES = [
@@ -890,8 +890,8 @@
       <div class="doc-header">
         <div class="row">
           <div>
-            <div class="eyebrow">제3호 서식 · 실별 대표교사용</div>
-            <h1>신학기 사무용품 신청</h1>
+            <div class="eyebrow"> 실별 대표교사용</div>
+            <h1>전주덕진중학교 신학기 사무용품 신청 사이트</h1>
             <div class="sub">${sub}</div>
           </div>
           <div>${right||''}</div>
@@ -918,7 +918,7 @@
     }).join('');
   
     app.innerHTML = `
-      ${header('신학기 사무용품 구입을 위해 담당하시는 실을 선택해주세요.', '<button class="ghost-btn" data-action="go-admin">교무실무사 합산</button>')}
+      ${header('신학기 사무용품 구입을 위해 담당하는 교과실을 선택해주세요.', '<button class="ghost-btn" data-action="go-admin">교무실무사 합산</button>')}
       <div class="content">
         <div class="select-intro">
           <h2>실 선택</h2>
@@ -1403,16 +1403,16 @@
   const GOOGLE_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyVpq9osDUKpx2NTh8bbAtzc8Kb6lJTpWLPhrEdyOY--vP4TGhS2EbZpgQ0inr4KaMv/exec";
   
   const ROOMS = [
-    {key:'admin1', name:'본교무실', no:'1'},
-    {key:'admin2', name:'교무실2', no:'2'},
-    {key:'Grade1', name:'1연구실', no:'3'},
-    {key:'Grade2', name:'2연구실', no:'4'},
-    {key:'Grade3', name:'3연구실', no:'5'},
-    {key:'counsel', name:'상담실', no:'6'},
-    {key:'StudentAffairs', name:'인성인권부', no:'7'},
-    {key:'library', name:'도서관', no:'8'},
-    {key:'gym', name:'체육실', no:'9'},
-    key:'etf', name:'기타실', no:'10'},
+    {key:'admin1', name:'본교무실'},
+    {key:'admin2', name:'교무실2'},
+    {key:'Grade1', name:'1연구실'},
+    {key:'Grade2', name:'2연구실'},
+    {key:'Grade3', name:'3연구실'},
+    {key:'counsel', name:'상담실'},
+    {key:'StudentAffairs', name:'인성인권부'},
+    {key:'library', name:'도서관'},
+    {key:'gym', name:'체육실'},
+    key:'etf', name:'기타실'},
   ];
   
   const CATEGORIES = [
@@ -1651,7 +1651,7 @@
       <div class="doc-header">
         <div class="row">
           <div>
-            <div class="eyebrow">제3호 서식 · 실별 대표교사용</div>
+            <div class="eyebrow">실별 대표교사용</div>
             <h1> 신학기 사무용품 신청</h1>
             <div class="sub">${sub}</div>
           </div>
